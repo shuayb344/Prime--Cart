@@ -9,11 +9,11 @@ A production-level, scalable e-commerce web application built with React, demons
 
 ## 🔗 Live Demo
 
-> **[Live Demo](#)** — *(add deployment link here)*
+> **[Live Demo](#)** 
 
 ## 📸 Screenshots
 
-> Add screenshots here after deployment
+> 
 
 ## ✨ Features
 
@@ -155,4 +155,4 @@ npm run preview
 
 ## 📄 License
 
-MIT © 2025
+MIT © 2026
