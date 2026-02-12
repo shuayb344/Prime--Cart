@@ -9,7 +9,7 @@ A production-level, scalable e-commerce web application built with React, demons
 
 ## 🔗 Live Demo
 
->  https://primecart34.netlify.app/
+>  https://prime-cart-five.vercel.app/
 
 ## 📸 Screenshots
 > <img width="421" height="808" alt="Screenshot from 2026-02-12 21-07-44" src="https://github.com/user-attachments/assets/86713183-dc34-4aa2-854b-16d81ed29161" />
