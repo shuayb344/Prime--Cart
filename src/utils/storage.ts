@@ -1,13 +1,13 @@
-export function getFromStorage(key, fallback = null) {
+export function getFromStorage<T>(key: string, fallback: T): T {
     try {
         const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : fallback;
+        return item ? (JSON.parse(item) as T) : fallback;
     } catch {
         return fallback;
     }
 }
 
-export function setToStorage(key, value) {
+export function setToStorage<T>(key: string, value: T): void {
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch {
@@ -15,7 +15,7 @@ export function setToStorage(key, value) {
     }
 }
 
-export function removeFromStorage(key) {
+export function removeFromStorage(key: string): void {
     try {
         localStorage.removeItem(key);
     } catch {
