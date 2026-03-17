@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { fetchProducts, fetchCategories } from '../services/api';
+import { Product, Category } from '../types';
 
 export function useProducts() {
-    const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -22,8 +23,8 @@ export function useProducts() {
                     setProducts(productsData);
                     setCategories(categoriesData);
                 }
-            } catch (err) {
-                if (!cancelled) setError(err.message);
+            } catch (err: any) {
+                if (!cancelled) setError(err.message || 'An error occurred');
             } finally {
                 if (!cancelled) setLoading(false);
             }

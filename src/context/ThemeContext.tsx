@@ -1,17 +1,23 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { getFromStorage, setToStorage } from '../utils/storage';
 
-const ThemeContext = createContext(null);
+interface ThemeContextType {
+    theme: string;
+    isDark: boolean;
+    toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
 const THEME_KEY = 'primecart_theme';
 
-function getInitialTheme() {
-    const stored = getFromStorage(THEME_KEY);
+function getInitialTheme(): string {
+    const stored = getFromStorage<string | null>(THEME_KEY, null);
     if (stored) return stored;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-export function ThemeProvider({ children }) {
-    const [theme, setTheme] = useState(getInitialTheme);
+export function ThemeProvider({ children }: { children: ReactNode }) {
+    const [theme, setTheme] = useState<string>(getInitialTheme);
 
     useEffect(() => {
         const root = document.documentElement;

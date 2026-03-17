@@ -1,23 +1,43 @@
-import { createContext, useContext, useReducer, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useReducer, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { getFromStorage, setToStorage } from '../utils/storage';
 import toast from 'react-hot-toast';
+import { Product, CartItem } from '../types';
 
-const CartContext = createContext(null);
+interface CartContextType {
+    items: CartItem[];
+    addToCart: (product: Product, quantity?: number) => void;
+    removeFromCart: (id: number) => void;
+    updateQuantity: (id: number, quantity: number) => void;
+    clearCart: () => void;
+    cartCount: number;
+    subtotal: number;
+    tax: number;
+    total: number;
+}
+
+const CartContext = createContext<CartContextType | null>(null);
 
 const CART_STORAGE_KEY = 'primecart_cart';
 
-const cartReducer = (state, action) => {
+type CartAction =
+    | { type: 'ADD_ITEM'; payload: { product: Product; quantity?: number } }
+    | { type: 'REMOVE_ITEM'; payload: number }
+    | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
+    | { type: 'CLEAR_CART' };
+
+const cartReducer = (state: CartItem[], action: CartAction): CartItem[] => {
     switch (action.type) {
         case 'ADD_ITEM': {
-            const existing = state.find((item) => item.id === action.payload.id);
+            const { product, quantity = 1 } = action.payload;
+            const existing = state.find((item) => item.id === product.id);
             if (existing) {
                 return state.map((item) =>
-                    item.id === action.payload.id
-                        ? { ...item, quantity: item.quantity + (action.payload.quantity || 1) }
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             }
-            return [...state, { ...action.payload, quantity: action.payload.quantity || 1 }];
+            return [...state, { ...product, quantity }];
         }
         case 'REMOVE_ITEM':
             return state.filter((item) => item.id !== action.payload);
@@ -37,28 +57,28 @@ const cartReducer = (state, action) => {
     }
 };
 
-export function CartProvider({ children }) {
+export function CartProvider({ children }: { children: ReactNode }) {
     const [items, dispatch] = useReducer(
         cartReducer,
         [],
-        () => getFromStorage(CART_STORAGE_KEY, [])
+        () => getFromStorage<CartItem[]>(CART_STORAGE_KEY, [])
     );
 
     useEffect(() => {
         setToStorage(CART_STORAGE_KEY, items);
     }, [items]);
 
-    const addToCart = useCallback((product, quantity = 1) => {
-        dispatch({ type: 'ADD_ITEM', payload: { ...product, quantity } });
+    const addToCart = useCallback((product: Product, quantity: number = 1) => {
+        dispatch({ type: 'ADD_ITEM', payload: { product, quantity } });
         toast.success(`${product.title.slice(0, 30)} added to cart`);
     }, []);
 
-    const removeFromCart = useCallback((id) => {
+    const removeFromCart = useCallback((id: number) => {
         dispatch({ type: 'REMOVE_ITEM', payload: id });
         toast.success('Item removed from cart');
     }, []);
 
-    const updateQuantity = useCallback((id, quantity) => {
+    const updateQuantity = useCallback((id: number, quantity: number) => {
         dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
     }, []);
 
